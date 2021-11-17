@@ -37,7 +37,7 @@
         android:id="@+id/textView"
         android:layout_width="61dp"
         android:layout_height="31dp"
-        android:text="・名称"
+        android:text="・名称だよ"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
