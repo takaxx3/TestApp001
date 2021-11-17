@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 public class new_activity extends AppCompatActivity {
 
-    private final String[] spinnerItems = {"1", "2", "3", "4","5"};
+    private final String[] spinnerItems = {"1", "2", "3", "4", "5"};
     private TextView textView;
 
     @Override
@@ -36,8 +36,8 @@ public class new_activity extends AppCompatActivity {
             public void onClick(View v) { finish(); }
         });
 
-        textView = findViewById(R.id.text_view9);
-
+        //textView = findViewById(R.id.text_view9);
+        /*
         Spinner spinner = findViewById(R.id.spinner);
 
         // ArrayAdapter
@@ -66,5 +66,9 @@ public class new_activity extends AppCompatActivity {
                 //
             }
         });
+
+         */
     }
+
+
 }

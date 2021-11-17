@@ -96,12 +96,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.469" />
 
-    <include
-        android:id="@+id/include"
-        app:layout="@layout/custom_spinner"
-        tools:layout_editor_absoluteX="187dp"
-        tools:layout_editor_absoluteY="226dp" />
-
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>
