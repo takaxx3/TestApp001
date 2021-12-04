@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity<val> extends AppCompatActivity {
+
+    private EditText editText;
+    private String message;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,5 +44,14 @@ public class MainActivity<val> extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // to get message from new_activity
+        Intent intentMain = getIntent();
+        message = intentMain.getStringExtra(new_activity.EXTRA_MESSAGE);
+
+        TextView textView = findViewById(R.id.text_view);
+        textView.setText(message);
+
+        //editText = findViewById(R.id.edit_text);
     }
 }

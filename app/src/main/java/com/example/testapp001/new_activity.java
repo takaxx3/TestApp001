@@ -2,6 +2,7 @@ package com.example.testapp001;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import java.io.BufferedReader;
@@ -12,7 +13,6 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Button;
-import android.widget.TextView;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -21,10 +21,14 @@ import java.io.IOException;
 
 public class new_activity extends AppCompatActivity {
 
-  //  private final String[] spinnerItems = {"1", "2", "3", "4", "5"};
+    // the key constant
+    public static final String EXTRA_MESSAGE
+           = "com.example.testapp001.MESSAGE";
+
     private TextView textView;
     private EditText editText;
     private File file;
+    static final int RESULT_SUBACTIVITY = 1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,7 +41,7 @@ public class new_activity extends AppCompatActivity {
 
         textView = findViewById(R.id.text_view);
         editText = findViewById(R.id.edit_text);
-        Button buttonSave = findViewById(R.id.button_save);
+        Button buttonSave = findViewById(R.id.add_back);
 
         // lambda
         buttonSave.setOnClickListener( v -> {
@@ -51,11 +55,7 @@ public class new_activity extends AppCompatActivity {
             else{
                 textView.setText(R.string.saved);
             }
-        });
 
-        Button buttonRead = findViewById(R.id.button_read);
-        // lambda
-        buttonRead.setOnClickListener( v -> {
             String str = readFile();
             if (str != null) {
                 textView.setText(str);
@@ -64,54 +64,42 @@ public class new_activity extends AppCompatActivity {
             }
         });
 
+        //Button buttonRead = findViewById(R.id.button_read);
+        // lambda
+        final EditText editText= findViewById(R.id.edit_text);
+
+        Button button = findViewById(R.id.add_back);
+        button.setOnClickListener( v -> {
+            Intent intent = new Intent(getApplication(), MainActivity.class);
+            if(editText.getText() != null){
+                String str = editText.getText().toString();
+                intent.putExtra(EXTRA_MESSAGE, str);
+            }
+            startActivityForResult( intent, RESULT_SUBACTIVITY );
+
+            // in order to clear the edittext
+            editText.setText("");
+        });
+
 
 
         Button backButton = findViewById(R.id.new_back);
         backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                Intent intent = new Intent(getApplication(),MainActivity.class);
+                startActivity(intent);
             }
         });
 
-        Button backButton2 = findViewById(R.id.add_back);
+        /*Button backButton2 = findViewById(R.id.add_back);
         backButton2.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { finish(); }
-        });
-
-        //textView = findViewById(R.id.text_view9);
-        /*
-        Spinner spinner = findViewById(R.id.spinner);
-
-        // ArrayAdapter
-        ArrayAdapter<String> adapter
-                = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, spinnerItems);
-
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // spinner に adapter をセット
-        spinner.setAdapter(adapter);
-
-        // リスナーを登録
-        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-            //　アイテムが選択された時
-            @Override
-            public void onItemSelected(AdapterView<?> parent,
-                                       View view, int position, long id) {
-                Spinner spinner = (Spinner)parent;
-                String item = (String)spinner.getSelectedItem();
-                textView.setText(item);
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplication(),MainActivity.class);
+                startActivity(intent);
             }
-
-            //　アイテムが選択されなかった
-            public void onNothingSelected(AdapterView<?> parent) {
-                //
-            }
-        });
-
-         */
+        });*/
     }
 
 
