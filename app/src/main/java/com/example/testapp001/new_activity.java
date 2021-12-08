@@ -1,34 +1,168 @@
 package com.example.testapp001;
 
 import androidx.appcompat.app.AppCompatActivity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import java.io.BufferedReader;
 import android.widget.TextView;
 import android.widget.EditText;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Button;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 
 public class new_activity extends AppCompatActivity {
-
-    // the key constant
     public static final String EXTRA_MESSAGE
-           = "com.example.testapp001.MESSAGE";
+            = "com.example.testapp001.MESSAGE";
+    static final int RESULT_SUBACTIVITY = 1000;
+    private TextView textView;
+    private EditText editTextName, editTextUpper,editTextLower,editTextAlarm;
+    private TestOpenHelper helper;
+    private SQLiteDatabase db;
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+       super.onCreate(savedInstanceState);
+       setContentView(R.layout.activity_new);
+
+        editTextName = findViewById(R.id.edit_text_name);
+        editTextUpper = findViewById(R.id.edit_text_upper);
+        editTextLower = findViewById(R.id.edit_text_lower);
+        editTextAlarm = findViewById(R.id.edit_text_alarm);
+
+        textView = findViewById(R.id.main_view);
+
+        Button insertButton = findViewById(R.id.add_back);
+        insertButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(helper == null){
+                    helper = new TestOpenHelper(getApplicationContext());
+                }
+
+                if(db == null){
+                    db = helper.getWritableDatabase();
+                }
+
+                String name = editTextName.getText().toString();
+                String upper = editTextUpper.getText().toString();
+                String lower = editTextLower.getText().toString();
+                String alarm = editTextAlarm.getText().toString();
+
+                // 価格は整数を想定
+                insertData(db, name, Integer.parseInt(upper),Integer.parseInt(lower),Integer.parseInt(alarm));
+            }
+        });
+
+       Button readButton = findViewById(R.id.add_back);
+        readButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readData();
+                Intent intent = new Intent(getApplication(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+      //もともとのボタン
+        Button backButton = findViewById(R.id.new_back);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplication(),MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        final EditText editText= findViewById(R.id.edit_text_name);
+
+        Button button = findViewById(R.id.add_back);
+        button.setOnClickListener( v -> {
+            Intent intent = new Intent(getApplication(), MainActivity.class);
+            if(editText.getText() != null){
+                String str = editText.getText().toString();
+                intent.putExtra(EXTRA_MESSAGE, str);
+            }
+            startActivityForResult( intent, RESULT_SUBACTIVITY );
+
+            // in order to clear the edittext
+            editText.setText("");
+        });
+
+    }
+
+
+    private void readData(){
+        if(helper == null){
+            helper = new TestOpenHelper(getApplicationContext());
+        }
+
+        if(db == null){
+            db = helper.getReadableDatabase();
+        }
+        Log.d("debug","**********Cursor");
+
+        Cursor cursor = db.query(
+                "testdb",
+                new String[] { "name", "upper","lower","alarm" },
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+
+        cursor.moveToFirst();
+
+        StringBuilder sbuilder = new StringBuilder();
+
+        for (int i = 0; i < cursor.getCount(); i++) {
+            sbuilder.append(cursor.getString(0));
+            sbuilder.append(": ");
+            sbuilder.append(cursor.getInt(1));
+            sbuilder.append("\n");
+            sbuilder.append(cursor.getInt(2));
+            sbuilder.append("\n");
+            sbuilder.append(cursor.getInt(3));
+            sbuilder.append("\n");
+            cursor.moveToNext();
+        }
+
+        // 忘れずに！
+        cursor.close();
+
+        Log.d("debug","**********"+sbuilder.toString());
+        textView.setText(sbuilder.toString());
+    }
+
+  private void insertData(SQLiteDatabase db, String data_name, int data_upper, int data_lower, int data_alarm){
+
+        ContentValues values = new ContentValues();
+        values.put("name", data_name);
+        values.put("upper", data_upper);
+        values.put("lower", data_lower);
+        values.put("alarm", data_alarm);
+
+        db.insert("testdb", null, values);
+    }
+
+}
+
+
+
+
+
+  /*  // the key constant
+
 
     private TextView textView;
     private EditText editText;
     private File file;
-    static final int RESULT_SUBACTIVITY = 1000;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,40 +200,10 @@ public class new_activity extends AppCompatActivity {
 
         //Button buttonRead = findViewById(R.id.button_read);
         // lambda
-        final EditText editText= findViewById(R.id.edit_text);
-
-        Button button = findViewById(R.id.add_back);
-        button.setOnClickListener( v -> {
-            Intent intent = new Intent(getApplication(), MainActivity.class);
-            if(editText.getText() != null){
-                String str = editText.getText().toString();
-                intent.putExtra(EXTRA_MESSAGE, str);
-            }
-            startActivityForResult( intent, RESULT_SUBACTIVITY );
-
-            // in order to clear the edittext
-            editText.setText("");
-        });
 
 
 
-        Button backButton = findViewById(R.id.new_back);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplication(),MainActivity.class);
-                startActivity(intent);
-            }
-        });
 
-        /*Button backButton2 = findViewById(R.id.add_back);
-        backButton2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplication(),MainActivity.class);
-                startActivity(intent);
-            }
-        });*/
     }
 
 
@@ -129,6 +233,4 @@ public class new_activity extends AppCompatActivity {
         }
 
         return text;
-    }
-
-}
+    }*/

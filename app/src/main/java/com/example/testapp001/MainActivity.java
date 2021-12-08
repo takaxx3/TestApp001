@@ -49,7 +49,7 @@ public class MainActivity<val> extends AppCompatActivity {
         Intent intentMain = getIntent();
         message = intentMain.getStringExtra(new_activity.EXTRA_MESSAGE);
 
-        TextView textView = findViewById(R.id.text_view);
+        TextView textView = findViewById(R.id.main_view);
         textView.setText(message);
 
         //editText = findViewById(R.id.edit_text);
