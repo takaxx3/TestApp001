@@ -1,12 +1,14 @@
 <resources>
     <string name="app_name">TestApp001</string>
-    <string name="button_send">出力</string>
-    <string name="button_send2">新規</string>
-    <string name="button_send3">設定</string>
+    <string name="output">出力</string>
+    <string name="registration">新規</string>
+    <string name="option">設定</string>
     <string name="no_text">"No text !"</string>
     <string name="saved">Saved</string>
     <string name="read_error">Read file error !</string>
     <string name="hint">文字を入力</string>
     <string name="save_file">Save file</string>
     <string name="read_file">Read file</string>
+    <string name="back">戻る</string>
+    <string name="add">追加</string>
 </resources>
