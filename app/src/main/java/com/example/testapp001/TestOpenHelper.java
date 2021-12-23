@@ -4,63 +4,44 @@ package com.example.testapp001;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
+import static com.example.testapp001.DBContract.DBEntry;
 
 public class TestOpenHelper extends SQLiteOpenHelper {
 
     // データーベースのバージョン
-    private static final int DATABASE_VERSION = 1;
+    // テーブルの内容などを変更したら、この数字を変更する
+    static final private int VERSION = 2;
 
-    // データーベース名下限
-    private static final String DATABASE_NAME = "TestDB.db";
-    private static final String TABLE_NAME = "testdb";
-    private static final String _ID = "_id";
-    private static final String COLUMN_NAME_TITLE = "name";
-    private static final String COLUMN_NAME_UPPER = "upper";
-    private static final String COLUMN_NAME_LOWER = "lower";
-    private static final String COLUMN_NAME_ALARM = "alarm";
+    // データベース名
+    static final private String DBNAME = "TestDB.db";
 
-    private static final String SQL_CREATE_ENTRIES =
-            "CREATE TABLE " + TABLE_NAME + " (" +
-                    _ID + " INTEGER PRIMARY KEY," +
-                    COLUMN_NAME_TITLE + " TEXT," +
-                    COLUMN_NAME_UPPER + " INTEGER," +
-                    COLUMN_NAME_LOWER + "INTEGER, " +
-                    COLUMN_NAME_ALARM + "alarm)";
-
-    private static final String SQL_DELETE_ENTRIES =
-            "DROP TABLE IF EXISTS " + TABLE_NAME;
-
-
-    TestOpenHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
+    public TestOpenHelper(Context context) {
+        super(context, DBNAME, null,VERSION);
     }
 
-    @Override
     public void onCreate(SQLiteDatabase db) {
-
-        // テーブル作成
-        // SQLiteファイルがなければSQLiteファイルが作成される
         db.execSQL(
-                SQL_CREATE_ENTRIES
+                "CREATE TABLE " + DBEntry.TABLE_NAME + " (" +
+                        DBEntry._ID + " INTEGER PRIMARY KEY," +
+                        DBEntry.COLUMN_NAME_TITLE + " TEXT," +
+                        DBEntry.COLUMN_NAME_UPPER + " INTEGER," +
+                        DBEntry.COLUMN_NAME_LOWER + "INTEGER, " +
+                        DBEntry.COLUMN_NAME_ALARM + "alarm)");
+
+        // トリガーを作成
+        db.execSQL(
+                "CREATE TRIGGER trigger_samp_tbl_update AFTER UPDATE ON " + DBEntry.TABLE_NAME +
+                        " BEGIN "+
+                        " UPDATE " + DBEntry.TABLE_NAME + " SET up_date = DATETIME('now', 'localtime') WHERE rowid == NEW.rowid; "+
+                        " END;"
+
         );
-
-        Log.d("debug", "onCreate(SQLiteDatabase db)");
-
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // アップデートの判別
-        db.execSQL(
-                SQL_DELETE_ENTRIES
-        );
+    public void onUpgrade(SQLiteDatabase db, int i, int i1) {
+
+        db.execSQL("DROP TABLE IF EXISTS " + DBEntry.TABLE_NAME);
         onCreate(db);
-    }
-
-    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        onUpgrade(db, oldVersion, newVersion);
     }
 
 }
